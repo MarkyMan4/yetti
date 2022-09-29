@@ -1,0 +1,13 @@
+fun test(x) {
+    var y = x;
+	y += 2;
+
+    return y;
+}
+
+fun double(x) {
+    return x * 2;
+}
+
+var x = test(3);
+var y = double(4);

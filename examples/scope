@@ -1,0 +1,13 @@
+var x = 2;
+
+fun addToX(n) {
+    x += n;
+    var y = x;
+    y = y + 10;
+
+    var x = 1;
+    print("inner x:", x);
+}
+
+addToX(3);
+print("outer x:", x);

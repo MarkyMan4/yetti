@@ -1,0 +1,20 @@
+// testing arrays
+
+var xs = [1, 2.4, "a", true];
+print(xs);
+print("length of xs:", xs.length());
+
+// iterate over array and print value at each index
+var i = 0;
+while(i < xs.length()) {
+    print("value at index", i, ":", xs[i]);
+    i += 1;
+}
+
+// 2d arrays
+var arr = [
+    [1,2,3],
+    [4,5,6]
+];
+
+print(arr[0][1]);

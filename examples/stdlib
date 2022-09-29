@@ -1,0 +1,13 @@
+print("hello world!");
+
+var x = 2;
+print(x + 2);
+
+print("value of x is:", x);
+
+var s = "abcdef";
+print("s =", s);
+var res = s.substr(1, 4);
+
+print(res);
+print("length of s:", s.length());
