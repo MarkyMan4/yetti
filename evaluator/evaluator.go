@@ -122,6 +122,8 @@ func evalInfixExpression(op string, left object.Object, right object.Object) obj
 		return evalFloatIntegerInfixExpression(op, left, right)
 	} else if left.Type() == object.FLOAT_OBJ && right.Type() == object.FLOAT_OBJ {
 		return evalFloatInfixExpression(op, left, right)
+	} else if left.Type() == object.STRING_OBJ && right.Type() == object.STRING_OBJ {
+		return evalStringInfixExpression(op, left, right)
 	}
 
 	return nil
@@ -225,6 +227,28 @@ func evalFloatInfixExpression(op string, left object.Object, right object.Object
 		return &object.FloatObject{Value: leftVal * rightVal}
 	case "/":
 		return &object.FloatObject{Value: leftVal / rightVal}
+	case "<":
+		return &object.BooleanObject{Value: leftVal < rightVal}
+	case "<=":
+		return &object.BooleanObject{Value: leftVal <= rightVal}
+	case "==":
+		return &object.BooleanObject{Value: leftVal == rightVal}
+	case ">":
+		return &object.BooleanObject{Value: leftVal > rightVal}
+	case ">=":
+		return &object.BooleanObject{Value: leftVal >= rightVal}
+	default:
+		return &object.ErrorObject{Message: fmt.Sprintf("unsupported operator '%s' for types %s, %s", op, left.Type(), right.Type())}
+	}
+}
+
+func evalStringInfixExpression(op string, left object.Object, right object.Object) object.Object {
+	leftVal := left.(*object.StringObject).Value
+	rightVal := right.(*object.StringObject).Value
+
+	switch op {
+	case "+":
+		return &object.StringObject{Value: leftVal + rightVal}
 	case "<":
 		return &object.BooleanObject{Value: leftVal < rightVal}
 	case "<=":

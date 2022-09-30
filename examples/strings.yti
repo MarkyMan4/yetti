@@ -1,0 +1,4 @@
+var s = "abc";
+s = s + "def";
+
+print(s);
