@@ -1,4 +1,13 @@
+// string concatenation
 var s = "abc";
+print(s.length());
 s = s + "def";
 
 print(s);
+print(s.length());
+
+// convert a number to a string
+var num = 2;
+var numStr = string(num);
+
+print("number as string: " + numStr);

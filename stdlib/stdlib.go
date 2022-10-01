@@ -12,6 +12,7 @@ var BuiltInFuns = map[string]BuiltIn{
 	"print":  PrintFun,
 	"substr": SubstringFun,
 	"length": LengthFun,
+	"string": StringFun,
 }
 
 func PrintFun(args ...object.Object) object.Object {
@@ -59,6 +60,7 @@ func SubstringFun(args ...object.Object) object.Object {
 	return &object.StringObject{Value: strLit[startIdx:endIdx]}
 }
 
+// get length of string or array
 func LengthFun(args ...object.Object) object.Object {
 	if args[0].Type() != object.STRING_OBJ && args[0].Type() != object.ARRAY_OBJ {
 		return &object.ErrorObject{Message: fmt.Sprintf("object of type %s has no function length", args[0].Type())}
@@ -75,4 +77,13 @@ func LengthFun(args ...object.Object) object.Object {
 		arrObj := args[0].(*object.ArrayObject)
 		return &object.IntegerObject{Value: int64(len(arrObj.Items))}
 	}
+}
+
+// convert object to string object
+func StringFun(args ...object.Object) object.Object {
+	if len(args) != 1 {
+		return &object.ErrorObject{Message: "string takes exactly one argument"}
+	}
+
+	return &object.StringObject{Value: args[0].ToString()}
 }

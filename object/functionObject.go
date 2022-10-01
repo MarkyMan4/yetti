@@ -14,5 +14,5 @@ func (f *FunctionObject) Type() string {
 }
 
 func (f *FunctionObject) ToString() string {
-	return "" // TODO: implement this later
+	return "function" // TODO: implement this later
 }
