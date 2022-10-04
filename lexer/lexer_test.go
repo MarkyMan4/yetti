@@ -109,3 +109,24 @@ func TestArray(t *testing.T) {
 		fmt.Println(tokens[i])
 	}
 }
+
+func TestReturnStatement(t *testing.T) {
+	fmt.Println("------ return statement --------")
+	// input := "var x = 1; while(x < 5) {x += 1;}"
+	input := "fun fib(n) { if(n <= 2) {return 1;} return fib(n - 1); }"
+	lex := NewLexer(input)
+
+	tok := lex.NextToken()
+	tokens := []token.Token{tok}
+
+	for tok.Type != token.EOF {
+		tok = lex.NextToken()
+		tokens = append(tokens, tok)
+	}
+
+	fmt.Println(input + "\n")
+
+	for i := range tokens {
+		fmt.Println(tokens[i])
+	}
+}

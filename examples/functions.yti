@@ -11,3 +11,16 @@ fun double(x) {
 
 var x = test(3);
 var y = double(4);
+
+print(x);
+print(y);
+
+var z = x + 2;
+print(z);
+
+fun doSomething() {
+    print("test");
+}
+
+var testVar = doSomething();
+print(testVar);

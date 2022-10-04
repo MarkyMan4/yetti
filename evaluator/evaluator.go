@@ -39,6 +39,7 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	case *ast.VarStatement:
 		val := Eval(node.Value, env)
 		env.Set(node.Identifier, val, true)
+		return val
 	case *ast.AssignStatement:
 		obj, ok := env.Get(node.Identifier)
 
@@ -51,6 +52,8 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		right := Eval(node.Value, env)
 		val := evalAssignStatement(node.AssignOp, left, right)
 		env.Set(node.Identifier, val, false)
+
+		return val
 	case *ast.IfStatement:
 		condResult := Eval(node.Condition, env)
 		if condResult.Type() != object.BOOLEAN_OBJ {
@@ -60,10 +63,10 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 
 		// if the condition is still true, run all statements and evaluate the loop again
 		if condResult.(*object.BooleanObject).Value {
-			for i := range node.Statements {
-				Eval(node.Statements[i], env)
-			}
+			return evalStatements(node.Statements, env)
 		}
+
+		return &object.NullObject{}
 	case *ast.WhileStatement:
 		condResult := Eval(node.Condition, env)
 		if condResult.Type() != object.BOOLEAN_OBJ {
@@ -84,7 +87,8 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	case *ast.FunctionCall:
 		return evalFunctionCall(node, env)
 	case *ast.ReturnStatement:
-		return Eval(node.ReturnVal, env)
+		res := Eval(node.ReturnVal, env)
+		return &object.ReturnObject{Value: res}
 	case *ast.ObjectFunctionExpression:
 		return evalObjFunCall(node, env)
 	}
@@ -264,6 +268,21 @@ func evalStringInfixExpression(op string, left object.Object, right object.Objec
 	}
 }
 
+func evalStatements(stmts []ast.Statement, env *object.Environment) object.Object {
+	var res object.Object
+
+	// evaluate each statement
+	for i := range stmts {
+		res := Eval(stmts[i], env)
+
+		if res.Type() == object.RETURN_OBJ || res.Type() == object.ERROR_OBJ {
+			return res
+		}
+	}
+
+	return res
+}
+
 func evalFunctionCall(functionCall *ast.FunctionCall, env *object.Environment) object.Object {
 	if _, ok := env.Get(functionCall.Name); ok {
 		return evalUserDefinedFun(functionCall, env)
@@ -298,24 +317,14 @@ func evalUserDefinedFun(functionCall *ast.FunctionCall, env *object.Environment)
 		childEnv.Set(function.Args[i], Eval(functionCall.Args[i], env), true)
 	}
 
-	// evaluate each statement in the function
-	for i := range function.Statements {
-		res := Eval(function.Statements[i], childEnv)
+	res := evalStatements(function.Statements, childEnv)
 
-		switch function.Statements[i].(type) {
-		case *ast.ReturnStatement:
-			return res
-		}
+	// get the return value if available
+	if val, ok := res.(*object.ReturnObject); ok {
+		return val.Value
 	}
 
-	// print out the state of the program
-	// fmt.Printf("child env values for function call %s\n", functionCall)
-	// for k, v := range childEnv.GetEnvMap() {
-	// 	fmt.Printf("%s: %s\n", k, v.ToString())
-	// }
-	// fmt.Println("------------------------------")
-
-	return &object.NullObject{}
+	return res
 }
 
 func evalBuiltInFun(functionCall *ast.FunctionCall, env *object.Environment) object.Object {

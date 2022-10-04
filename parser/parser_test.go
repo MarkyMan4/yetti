@@ -127,3 +127,59 @@ func TestParseArrayIndex(t *testing.T) {
 		fmt.Println(stmt.ToString())
 	}
 }
+
+func TestParseFunc(t *testing.T) {
+	fmt.Println("------ test parsing function -------")
+	// l := lexer.NewLexer("func fib(n) {if(n <= 2) {return 1;} return fib(n - 1);} fib(3);")
+	l := lexer.NewLexer("fun test(x) { var y = x; y += 2; return x; } fun double(x) { return x * 2; } var x = test(3); var y = double(4);")
+	p := NewParser(l)
+	prog := p.Parse()
+
+	// funcDef := prog.Statements[1].(*ast.FunctionDef)
+
+	// for i := range funcDef.Statements {
+	// 	fmt.Println(funcDef.Statements[i].ToString())
+	// }
+
+	for i := range prog.Statements {
+		fmt.Println(prog.Statements[i].ToString())
+	}
+}
+
+// func TestParseFuncNoArgs(t *testing.T) {
+// 	fmt.Println("------ test parsing function no args -------")
+// 	// l := lexer.NewLexer("func fib(n) {if(n <= 2) {return 1;} return fib(n - 1);} fib(3);")
+// 	l := lexer.NewLexer("fun test() { print(\"hello\"); } test();")
+// 	p := NewParser(l)
+// 	prog := p.Parse()
+
+// 	// funcDef := prog.Statements[1].(*ast.FunctionDef)
+
+// 	// for i := range funcDef.Statements {
+// 	// 	fmt.Println(funcDef.Statements[i].ToString())
+// 	// }
+
+// 	for i := range prog.Statements {
+// 		fmt.Println(prog.Statements[i].ToString())
+// 	}
+// }
+
+func TestParseRecursiveFunction(t *testing.T) {
+	fmt.Println("------ test parsing recursive function -------")
+	// l := lexer.NewLexer("func fib(n) {if(n <= 2) {return 1;} return fib(n - 1);} fib(3);")
+	l := lexer.NewLexer("fun fib(n) { if(n <= 2) {return 1;} return fib(n - 1) + fib(n - 2); }")
+	p := NewParser(l)
+	prog := p.Parse()
+
+	funcDef := prog.Statements[0].(*ast.FunctionDef)
+
+	for i := range funcDef.Statements {
+		fmt.Println(funcDef.Statements[i].ToString())
+	}
+
+	// fmt.Println(funcDef)
+
+	// for i := range prog.Statements {
+	// 	fmt.Println(prog.Statements[i].ToString())
+	// }
+}

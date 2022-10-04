@@ -9,6 +9,7 @@ const (
 	FUNCTION_OBJ = "FUNCTION"
 	ARRAY_OBJ    = "ARRAY"
 	NULL_OBJ     = "NULL"
+	RETURN_OBJ   = "RETURN_OBJ"
 )
 
 type Object interface {

@@ -302,6 +302,12 @@ func (p *Parser) parseReturnStmt() ast.Statement {
 	p.nextToken()
 	returnStmt := &ast.ReturnStatement{ReturnVal: p.parseExpression()}
 
+	if !p.expectNextToken(token.SEMI) {
+		return nil
+	}
+
+	p.nextToken()
+
 	return returnStmt
 }
 
@@ -332,6 +338,7 @@ func (p *Parser) parseAssignStmt() ast.Statement {
 	return assignStmt
 }
 
+// TODO: handle function with no args
 func (p *Parser) parseFunctionDef() ast.Statement {
 	if !p.expectNextToken(token.IDENT) {
 		return nil
@@ -404,7 +411,10 @@ func (p *Parser) parseFunctionCall() ast.Statement {
 		}
 
 		p.nextToken()
-		p.nextToken()
+
+		if p.curToken.Type != token.RPAREN {
+			p.nextToken()
+		}
 	}
 
 	if p.curToken.Type == token.EOF {
@@ -466,7 +476,6 @@ func (p *Parser) parseIndexExpression(arr ast.Expression) ast.Expression {
 		errMsg := fmt.Sprintf("Unexpected token %s.", p.curToken.Literal)
 		p.Errors = append(p.Errors, errMsg)
 
-		fmt.Println(errMsg)
 		return nil
 	}
 
