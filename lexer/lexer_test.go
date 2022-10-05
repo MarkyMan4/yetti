@@ -19,10 +19,8 @@ func TestVar(t *testing.T) {
 		tokens = append(tokens, tok)
 	}
 
-	fmt.Println(input + "\n")
-
-	for i := range tokens {
-		fmt.Println(tokens[i])
+	if len(tokens) != 13 {
+		t.Fatalf("Expected 13 tokens, found %d\n", len(tokens))
 	}
 }
 
