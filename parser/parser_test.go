@@ -8,79 +8,53 @@ import (
 	"github.com/MarkyMan4/yetti/lexer"
 )
 
-// func TestParse(t *testing.T) {
-// 	l := lexer.NewLexer("var x = 1; while(x < 5) {x += 1;}")
-// 	// l := lexer.NewLexer("var x = 1; someFunc(x, 2);")
-// 	// l := lexer.NewLexer("var x = 1;")
-// 	p := NewParser(l)
-// 	prog := p.Parse()
-
-// 	// stmt := prog.Statements[1].(*ast.WhileStatement)
-
-// 	// fmt.Println(stmt.Name)
-
-// 	for i := range prog.Statements {
-// 		fmt.Println(prog.Statements[i])
-// 	}
-
-// 	// fmt.Println(stmt.ToString())
-
-// 	// for i := range stmt.Statements {
-// 	// 	fmt.Println(stmt.Statements[i])
-// 	// }
-
-// 	// tok := l.NextToken()
-
-// 	// for tok.Type != token.EOF {
-// 	// 	fmt.Println(tok)
-// 	// 	tok = l.NextToken()
-// 	// }
-// }
-
-// func TestParseIf(t *testing.T) {
-// 	l := lexer.NewLexer("var x = 1; if(x < 5) {x += 1;}")
-// 	// l := lexer.NewLexer("var x = 1; someFunc(x, 2);")
-// 	// l := lexer.NewLexer("var x = 1;")
-// 	p := NewParser(l)
-// 	prog := p.Parse()
-
-// 	stmt := prog.Statements[1].(*ast.IfStatement)
-
-// 	fmt.Println(stmt.ToString())
-
-// 	// for i := range prog.Statements {
-// 	// 	fmt.Println(prog.Statements[i])
-// 	// }
-
-// 	// fmt.Println(stmt.ToString())
-
-// 	// for i := range stmt.Statements {
-// 	// 	fmt.Println(stmt.Statements[i])
-// 	// }
-// }
-
-func TestParseFuncDef(t *testing.T) {
-	l := lexer.NewLexer("fun test(x, y) {var a = x; b = y;} var x = test(1, 2);")
+func TestParse(t *testing.T) {
+	l := lexer.NewLexer("var x = 1; while(x < 5) {x += 1;}")
 	p := NewParser(l)
 	prog := p.Parse()
 
-	// stmt := prog.Statements[0].(*ast.FunctionDef)
-
-	// fmt.Println(stmt.ToString())
-
-	// stmt1 := prog.Statements[1].(*ast.VarStatement)
-
-	// fmt.Println(stmt1.ToString())
-
-	for i := range prog.Statements {
-		fmt.Println(prog.Statements[i])
+	_, ok := prog.Statements[0].(*ast.VarStatement)
+	if !ok {
+		t.Fatal("failed to print var statement")
 	}
+
+	_, ok = prog.Statements[1].(*ast.WhileStatement)
+	if !ok {
+		t.Fatal("failed to print while statement")
+	}
+
+	// for i := range prog.Statements {
+	// 	fmt.Println(prog.Statements[i].ToString())
+	// }
 
 	// fmt.Println(stmt.ToString())
 
 	// for i := range stmt.Statements {
 	// 	fmt.Println(stmt.Statements[i])
 	// }
+
+	// tok := l.NextToken()
+
+	// for tok.Type != token.EOF {
+	// 	fmt.Println(tok)
+	// 	tok = l.NextToken()
+	// }
+}
+
+func TestParseIf(t *testing.T) {
+	l := lexer.NewLexer("var x = 1; if(x < 5) {x += 1;}")
+	p := NewParser(l)
+	prog := p.Parse()
+
+	_, ok := prog.Statements[0].(*ast.VarStatement)
+	if !ok {
+		t.Fatal("failed to parse var statement")
+	}
+
+	_, ok = prog.Statements[1].(*ast.IfStatement)
+	if !ok {
+		t.Fatal("failed to parse if statement")
+	}
 }
 
 func TestParseString(t *testing.T) {
@@ -89,9 +63,10 @@ func TestParseString(t *testing.T) {
 	p := NewParser(l)
 	prog := p.Parse()
 
-	stmt := prog.Statements[0].(*ast.FunctionCall)
-
-	fmt.Println(stmt.ToString())
+	_, ok := prog.Statements[0].(*ast.FunctionCall)
+	if !ok {
+		t.Fatal("failed to parse print function")
+	}
 }
 
 func TestParseObjectFunctionCall(t *testing.T) {
@@ -100,20 +75,12 @@ func TestParseObjectFunctionCall(t *testing.T) {
 	p := NewParser(l)
 	prog := p.Parse()
 
-	stmt := prog.Statements[1].(*ast.VarStatement)
-
-	fmt.Println(stmt.ToString())
-}
-
-func TestParseArray(t *testing.T) {
-	fmt.Println("------ test parsing array -------")
-	l := lexer.NewLexer("var xs = [1,2,3,4];")
-	p := NewParser(l)
-	prog := p.Parse()
-
-	stmt := prog.Statements[0].(*ast.VarStatement)
-
-	fmt.Println(stmt.ToString())
+	for i := range prog.Statements {
+		_, ok := prog.Statements[i].(*ast.VarStatement)
+		if !ok {
+			t.Fatalf("failed to print var statement %d\n", i)
+		}
+	}
 }
 
 func TestParseArrayIndex(t *testing.T) {
@@ -123,8 +90,10 @@ func TestParseArrayIndex(t *testing.T) {
 	prog := p.Parse()
 
 	for i := range prog.Statements {
-		stmt := prog.Statements[i].(*ast.VarStatement)
-		fmt.Println(stmt.ToString())
+		_, ok := prog.Statements[i].(*ast.VarStatement)
+		if !ok {
+			t.Fatalf("failed to print var statement %d\n", i)
+		}
 	}
 }
 
@@ -135,14 +104,24 @@ func TestParseFunc(t *testing.T) {
 	p := NewParser(l)
 	prog := p.Parse()
 
-	// funcDef := prog.Statements[1].(*ast.FunctionDef)
+	_, ok := prog.Statements[0].(*ast.FunctionDef)
+	if !ok {
+		t.Fatal("failed to parse first function definition")
+	}
 
-	// for i := range funcDef.Statements {
-	// 	fmt.Println(funcDef.Statements[i].ToString())
-	// }
+	_, ok = prog.Statements[1].(*ast.FunctionDef)
+	if !ok {
+		t.Fatal("failed to parse second function definition")
+	}
 
-	for i := range prog.Statements {
-		fmt.Println(prog.Statements[i].ToString())
+	_, ok = prog.Statements[2].(*ast.VarStatement)
+	if !ok {
+		t.Fatal("failed to parse first var statement")
+	}
+
+	_, ok = prog.Statements[3].(*ast.VarStatement)
+	if !ok {
+		t.Fatal("failed to parse second var statement")
 	}
 }
 
@@ -166,20 +145,20 @@ func TestParseFunc(t *testing.T) {
 
 func TestParseRecursiveFunction(t *testing.T) {
 	fmt.Println("------ test parsing recursive function -------")
-	// l := lexer.NewLexer("func fib(n) {if(n <= 2) {return 1;} return fib(n - 1);} fib(3);")
 	l := lexer.NewLexer("fun fib(n) { if(n <= 2) {return 1;} return fib(n - 1) + fib(n - 2); }")
 	p := NewParser(l)
 	prog := p.Parse()
 
-	funcDef := prog.Statements[0].(*ast.FunctionDef)
+	funcDef, ok := prog.Statements[0].(*ast.FunctionDef)
 
-	for i := range funcDef.Statements {
-		fmt.Println(funcDef.Statements[i].ToString())
+	if !ok {
+		t.Fatal("could not parse function definition")
 	}
 
-	// fmt.Println(funcDef)
-
-	// for i := range prog.Statements {
-	// 	fmt.Println(prog.Statements[i].ToString())
-	// }
+	for i := range funcDef.Statements {
+		if funcDef.Statements[i] == nil {
+			t.Fatal("found nil statement")
+		}
+		// fmt.Println(funcDef.Statements[i].ToString())
+	}
 }
