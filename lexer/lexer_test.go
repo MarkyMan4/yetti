@@ -89,7 +89,6 @@ func TestObjFunctions(t *testing.T) {
 
 func TestArray(t *testing.T) {
 	fmt.Println("------ arrays --------")
-	// input := "var x = 1; while(x < 5) {x += 1;}"
 	input := "var s = [1,2, 3, 4];"
 	lex := NewLexer(input)
 
@@ -110,8 +109,7 @@ func TestArray(t *testing.T) {
 
 func TestReturnStatement(t *testing.T) {
 	fmt.Println("------ return statement --------")
-	// input := "var x = 1; while(x < 5) {x += 1;}"
-	input := "fun fib(n) { if(n <= 2) {return 1;} return fib(n - 1); }"
+	input := "fun fib(n) { if(n <= 2) {return 1;} return fib(n - 1) + fib(n - 2); }"
 	lex := NewLexer(input)
 
 	tok := lex.NextToken()
@@ -121,8 +119,6 @@ func TestReturnStatement(t *testing.T) {
 		tok = lex.NextToken()
 		tokens = append(tokens, tok)
 	}
-
-	fmt.Println(input + "\n")
 
 	for i := range tokens {
 		fmt.Println(tokens[i])
