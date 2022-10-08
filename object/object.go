@@ -10,6 +10,7 @@ const (
 	ARRAY_OBJ    = "ARRAY"
 	NULL_OBJ     = "NULL"
 	RETURN_OBJ   = "RETURN_OBJ"
+	FILE_OBJ     = "FILE"
 )
 
 type Object interface {

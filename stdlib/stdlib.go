@@ -2,6 +2,7 @@ package stdlib
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/MarkyMan4/yetti/object"
 )
@@ -86,4 +87,27 @@ func StringFun(args ...object.Object) object.Object {
 	}
 
 	return &object.StringObject{Value: args[0].ToString()}
+}
+
+func OpenFileFun(args ...object.Object) object.Object {
+	if len(args) != 2 {
+		return &object.ErrorObject{Message: "open takes exactly two arguments"}
+	}
+
+	if args[0].Type() != object.STRING_OBJ {
+		return &object.ErrorObject{Message: "first argument must be a file name"}
+	}
+
+	if args[1].Type() != object.STRING_OBJ && args[1].ToString() != "r" && args[1].ToString() != "w" {
+		return &object.ErrorObject{Message: "second argument must be \"r\" or \"w\""}
+	}
+
+	if _, err := os.Stat(args[0].ToString()); err != nil && args[1].ToString() != "w" {
+		return &object.ErrorObject{Message: fmt.Sprintf("file %s does not exist", args[0].ToString())}
+	}
+
+	return &object.FileObject{
+		FileName: args[0].ToString(),
+		Mode:     args[1].ToString(),
+	}
 }
