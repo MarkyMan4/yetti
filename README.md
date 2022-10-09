@@ -1,4 +1,3 @@
 # yetti
-The Yetti programming language
+The Yetti scripting language
 
-An interpreted scripting language

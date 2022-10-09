@@ -6,6 +6,9 @@ LEXER=github.com/MarkyMan4/yetti/lexer
 build:
 	go build -o $(BIN) main.go
 
+clean:
+	rm $(BIN)
+
 test_all:
 	go test ./...
 

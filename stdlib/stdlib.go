@@ -1,6 +1,7 @@
 package stdlib
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 
@@ -14,6 +15,7 @@ var BuiltInFuns = map[string]BuiltIn{
 	"substr": SubstringFun,
 	"length": LengthFun,
 	"string": StringFun,
+	"input":  InputFun,
 }
 
 func PrintFun(args ...object.Object) object.Object {
@@ -29,6 +31,25 @@ func PrintFun(args ...object.Object) object.Object {
 	}
 
 	return &object.NullObject{}
+}
+
+func InputFun(args ...object.Object) object.Object {
+	if len(args) > 1 {
+		return &object.ErrorObject{Message: fmt.Sprintf("input expects 0 or 1 arguments but received %d", len(args))}
+	}
+
+	if len(args) > 0 {
+		if args[0].Type() != object.STRING_OBJ {
+			return &object.ErrorObject{Message: fmt.Sprintf("input expects string argument but received object of type %s", args[0].Type())}
+		}
+
+		fmt.Print(args[0].ToString())
+	}
+
+	scanner := bufio.NewScanner(os.Stdin)
+	scanner.Scan()
+
+	return &object.StringObject{Value: scanner.Text()}
 }
 
 // TODO: handle indices out of bounds or invalid indices (e.g. index 2 < index 1)

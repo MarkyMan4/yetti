@@ -1,0 +1,3 @@
+var inp = input("enter your name: ");
+
+print("your name is:", inp);
