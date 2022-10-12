@@ -76,6 +76,10 @@ func (p *Parser) Parse() *ast.Program {
 	for p.curToken.Type != token.EOF {
 		prog.Statements = append(prog.Statements, p.parseStmt())
 		p.nextToken()
+
+		if p.curToken.Type == token.SEMI {
+			p.nextToken()
+		}
 	}
 
 	return prog
@@ -373,6 +377,11 @@ func (p *Parser) parseFunctionDef() ast.Statement {
 		p.nextToken()
 	}
 
+	// in case there were no arguments, the loop was skipped
+	if p.curToken.Type == token.RPAREN {
+		p.nextToken()
+	}
+
 	if p.curToken.Type != token.LBRACE {
 		errMsg := fmt.Sprintf("Unexpected token %s. Expected %s", p.curToken.Literal, token.LBRACE)
 		p.Errors = append(p.Errors, errMsg)
@@ -386,6 +395,10 @@ func (p *Parser) parseFunctionDef() ast.Statement {
 	for p.curToken.Type != token.RBRACE {
 		funcDef.Statements = append(funcDef.Statements, p.parseStmt())
 		p.nextToken()
+
+		if p.curToken.Type == token.SEMI {
+			p.nextToken()
+		}
 	}
 
 	return funcDef

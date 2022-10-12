@@ -125,23 +125,27 @@ func TestParseFunc(t *testing.T) {
 	}
 }
 
-// func TestParseFuncNoArgs(t *testing.T) {
-// 	fmt.Println("------ test parsing function no args -------")
-// 	// l := lexer.NewLexer("func fib(n) {if(n <= 2) {return 1;} return fib(n - 1);} fib(3);")
-// 	l := lexer.NewLexer("fun test() { print(\"hello\"); } test();")
-// 	p := NewParser(l)
-// 	prog := p.Parse()
+func TestParseFuncNoArgs(t *testing.T) {
+	fmt.Println("------ test parsing function no args -------")
+	// l := lexer.NewLexer("func fib(n) {if(n <= 2) {return 1;} return fib(n - 1);} fib(3);")
+	l := lexer.NewLexer("fun test() { var x = 2; } test();")
+	p := NewParser(l)
+	prog := p.Parse()
 
-// 	// funcDef := prog.Statements[1].(*ast.FunctionDef)
+	_, ok := prog.Statements[0].(*ast.FunctionDef)
+	if !ok {
+		t.Fatal("failed to parse second function definition")
+	}
 
-// 	// for i := range funcDef.Statements {
-// 	// 	fmt.Println(funcDef.Statements[i].ToString())
-// 	// }
+	_, ok = prog.Statements[1].(*ast.FunctionCall)
+	if !ok {
+		t.Fatal("failed to parse second function call")
+	}
 
-// 	for i := range prog.Statements {
-// 		fmt.Println(prog.Statements[i].ToString())
-// 	}
-// }
+	if len(prog.Statements) > 2 {
+		t.Fatalf("expected %d statements but found %d\n", 2, len(prog.Statements))
+	}
+}
 
 func TestParseRecursiveFunction(t *testing.T) {
 	fmt.Println("------ test parsing recursive function -------")
