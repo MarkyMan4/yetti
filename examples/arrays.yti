@@ -18,3 +18,12 @@ var arr = [
 ];
 
 print(arr[0][1]);
+
+// create an empty array and append values
+var values = [];
+values = values.append(1);
+values = values.append(2);
+values = values.append(3);
+values = values.append(4);
+
+print(values);

@@ -14,6 +14,7 @@ var BuiltInFuns = map[string]BuiltIn{
 	"print":  PrintFun,
 	"substr": SubstringFun,
 	"length": LengthFun,
+	"append": ArrayAppendFun,
 	"string": StringFun,
 	"input":  InputFun,
 }
@@ -99,6 +100,22 @@ func LengthFun(args ...object.Object) object.Object {
 		arrObj := args[0].(*object.ArrayObject)
 		return &object.IntegerObject{Value: int64(len(arrObj.Items))}
 	}
+}
+
+// append to an array
+func ArrayAppendFun(args ...object.Object) object.Object {
+	if args[0].Type() != object.ARRAY_OBJ {
+		return &object.ErrorObject{Message: fmt.Sprintf("object of type %s has no function append", args[0].Type())}
+	}
+
+	if len(args) != 2 {
+		return &object.ErrorObject{Message: "append takes exactly one argument"}
+	}
+
+	arr := args[0].(*object.ArrayObject)
+	arr.Items = append(arr.Items, args[1])
+
+	return arr
 }
 
 // convert object to string object
