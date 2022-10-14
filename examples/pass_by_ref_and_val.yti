@@ -1,0 +1,17 @@
+fun appendToArray(arr, val) {
+    arr = arr.append(val);
+}
+
+fun addOne(num) {
+    num += 1;
+}
+
+// pass by reference
+var arr = [1,2,3];
+appendToArray(arr, 4);
+print(arr); // [1,2,3,4]
+
+// pass by value
+var num = 1;
+addOne(num);
+print(num); // 1
