@@ -1,0 +1,4 @@
+var file = openFile("examples/data/testfile.txt");
+var content = file.readFile();
+
+print(content);

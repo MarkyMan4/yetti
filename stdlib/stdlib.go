@@ -11,12 +11,14 @@ import (
 type BuiltIn func(args ...object.Object) object.Object
 
 var BuiltInFuns = map[string]BuiltIn{
-	"print":  PrintFun,
-	"substr": SubstringFun,
-	"length": LengthFun,
-	"append": ArrayAppendFun,
-	"string": StringFun,
-	"input":  InputFun,
+	"print":    PrintFun,
+	"substr":   SubstringFun,
+	"length":   LengthFun,
+	"append":   ArrayAppendFun,
+	"string":   StringFun,
+	"input":    InputFun,
+	"openFile": OpenFileFun,
+	"readFile": ReadFileFun,
 }
 
 func PrintFun(args ...object.Object) object.Object {
@@ -127,25 +129,42 @@ func StringFun(args ...object.Object) object.Object {
 	return &object.StringObject{Value: args[0].ToString()}
 }
 
+/*
+--------------------------------------
+file operations
+--------------------------------------
+*/
 func OpenFileFun(args ...object.Object) object.Object {
-	if len(args) != 2 {
-		return &object.ErrorObject{Message: "open takes exactly two arguments"}
+	if len(args) != 1 {
+		return &object.ErrorObject{Message: "openFile takes exactly one arguments"}
 	}
 
 	if args[0].Type() != object.STRING_OBJ {
-		return &object.ErrorObject{Message: "first argument must be a file name"}
+		return &object.ErrorObject{Message: "argument must be a file name"}
 	}
 
-	if args[1].Type() != object.STRING_OBJ && args[1].ToString() != "r" && args[1].ToString() != "w" {
-		return &object.ErrorObject{Message: "second argument must be \"r\" or \"w\""}
-	}
-
-	if _, err := os.Stat(args[0].ToString()); err != nil && args[1].ToString() != "w" {
+	if _, err := os.Stat(args[0].ToString()); err != nil {
 		return &object.ErrorObject{Message: fmt.Sprintf("file %s does not exist", args[0].ToString())}
 	}
 
-	return &object.FileObject{
-		FileName: args[0].ToString(),
-		Mode:     args[1].ToString(),
+	return &object.FileObject{FileName: args[0].ToString()}
+}
+
+func ReadFileFun(args ...object.Object) object.Object {
+	if len(args) != 1 {
+		return &object.ErrorObject{Message: "readFile must use a file object"}
 	}
+
+	if args[0].Type() != object.FILE_OBJ {
+		return &object.ErrorObject{Message: fmt.Sprintf("readFile is not defined for object of type %s", args[0].Type())}
+	}
+
+	filename := args[0].(*object.FileObject).FileName
+	content, err := os.ReadFile(filename)
+
+	if err != nil {
+		return &object.ErrorObject{Message: fmt.Sprintf("failed to read file %s - %s", filename, err.Error())}
+	}
+
+	return &object.StringObject{Value: string(content)}
 }

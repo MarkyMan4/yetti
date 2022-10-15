@@ -1,8 +1,9 @@
 package object
 
+import "fmt"
+
 type FileObject struct {
 	FileName string
-	Mode     string // "r" or "w" TODO: add "a" for append mode
 }
 
 func (f *FileObject) Type() string {
@@ -10,5 +11,5 @@ func (f *FileObject) Type() string {
 }
 
 func (f *FileObject) ToString() string {
-	return "file object"
+	return fmt.Sprintf("file object %s", f.FileName)
 }
